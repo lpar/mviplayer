@@ -17,7 +17,7 @@ To test how things will be renamed before renaming them, use the `-t` option.
 
 To report verbosely what's done, use the `-v` option.
 
-You can add custom rename rules if the default behavior doesn't work for particular shows. They are held in a file `rules.json` in the destination directory. Example:
+You can add custom rename rules if the default behavior doesn't work for particular shows. They are held in a file `rules.json` in `~/.config/mviplayer`. Example:
 
 ```json
 [

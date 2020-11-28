@@ -11,6 +11,7 @@ import (
 	"strings"
 	"unicode"
 
+  "github.com/adrg/xdg"
 	"github.com/dhowden/tag"
 )
 
@@ -87,9 +88,9 @@ func renamer(dest string, rules []RenameRule) filepath.WalkFunc {
 			return nil
 		}
 		ext := filepath.Ext(path)
-		if !strings.EqualFold(ext, ".m4a") {
+		if !strings.EqualFold(ext, ".m4a") && !strings.EqualFold(ext, ".mp4") {
 			if *verbose {
-				fmt.Fprintf(os.Stderr, "skipping %s: not .m4a\n", path)
+				fmt.Fprintf(os.Stderr, "skipping %s: not .m4a/mp4\n", path)
 			}
 			return nil
 		}
@@ -128,11 +129,12 @@ func applyRules(rules []RenameRule, x string) string {
 }
 
 func renameFile(path string, dest string, rules []RenameRule, tags tag.Metadata) error {
+  ext := filepath.Ext(path)
 	enn, _ := tags.Track()
 	snn, _ := tags.Disc()
 	title := sanitize(applyRules(rules, tags.Title()))
 	show := sanitize(applyRules(rules, tags.Album()))
-	fname := fmt.Sprintf("s%02d e%02d %s.m4a", snn, enn, title)
+	fname := fmt.Sprintf("s%02d e%02d %s%s", snn, enn, title, ext)
 	destpath := filepath.Join(dest, show, fname)
   destdir := filepath.Dir(destpath)
   err := os.MkdirAll(destdir, 0755)
@@ -169,7 +171,10 @@ type RenameRule struct {
 }
 
 func readRules(destDir string) ([]RenameRule, error) {
-	ruleFile := filepath.Join(destDir, "rules.json")
+	ruleFile, err := xdg.ConfigFile("mviplayer/rules.json")
+  if err != nil {
+    return []RenameRule{}, err
+  }
 	data, err := ioutil.ReadFile(ruleFile)
 	if err != nil {
 		if os.IsNotExist(err) {
