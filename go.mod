@@ -1,9 +1,10 @@
 module mviplayer
 
-go 1.15
+go 1.21
 
 require (
 	github.com/adrg/xdg v0.4.0
-	github.com/dhowden/tag v0.0.0-20220618230019-adf36e896086
-	golang.org/x/sys v0.4.0 // indirect
+	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25
 )
+
+require golang.org/x/sys v0.12.0 // indirect
